@@ -130,6 +130,9 @@ func (c *Conversation) getAdvancedHistoryMessageList(ctx context.Context, req sd
 		if minSeq == 1 && lostSeqListLength == 0 {
 			messageListCallback.IsEnd = true
 		} else {
+			if minSeq == 0 && maxSeq == 0 {
+				minSeq = req.LastMinSeq
+			}
 			c.messageBlocksEndContinuityCheck(ctx, minSeq, conversationID, notStartTime, isReverse,
 				req.Count, startTime, &list, &messageListCallback)
 		}
