@@ -30,7 +30,7 @@ func main() {
 	singleSenderMsgNum = flag.Int("mn", 100, "single sender msg num")
 	intervalTime = flag.Int("t", 10, "interval time mill second")
 	flag.Parse()
-	test.InitMgr(*senderNum)
+	//test.InitMgr(*senderNum)
 	log.ZInfo(ctx, "logName", test.LogName, "logLevel", uint32(test.LogLevel))
 	log.ZWarn(ctx, "reliability test start ", errors.New(""), "sender num", *senderNum, " single sender msg num", *singleSenderMsgNum, " send msg total num ", *senderNum**singleSenderMsgNum)
 

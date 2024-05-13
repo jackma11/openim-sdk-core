@@ -127,7 +127,7 @@ func (s *Syncer[T, V]) Sync(ctx context.Context, serverData []T, localData []T, 
 	for i, item := range localData {
 		localMap[s.uuid(item)] = localData[i]
 	}
-	log.ZWarn(ctx, "Sync-serverData", err, "localMap", localMap, "serverData", serverData)
+	log.ZWarn(ctx, "Sync-serverData", err, "ts", s.ts, "s", s)
 	// Iterate through server data to sync with local data.
 	for i := range serverData {
 		server := serverData[i]

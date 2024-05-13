@@ -17,7 +17,7 @@ var (
 	MANAGERUSERID = "openIMAdmin"
 
 	PLATFORMID = constant.WindowsPlatformID
-	LogLevel   = uint32(5)
+	LogLevel   = uint32(3)
 
 	REGISTERADDR = APIADDR + constant.UserRegister
 	TOKENADDR    = APIADDR + constant.GetUsersToken

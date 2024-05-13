@@ -22,7 +22,7 @@ var (
 	WSADDR     = fmt.Sprintf("ws://%v:10001", TESTIP)
 	SECRET     = "openIM123"
 	PLATFORMID = constant.WindowsPlatformID
-	LogLevel   = uint32(5)
+	LogLevel   = uint32(3)
 )
 
 func SetServerTimeOffset(offset int64) {

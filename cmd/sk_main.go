@@ -119,7 +119,7 @@ func main() {
 
 	//	println("token ", tokenx)
 	time.Sleep(100000 * time.Second)
-	b := utils.GetCurrentTimestampBySecond()
+	utils.GetCurrentTimestampBySecond()
 	i := 0
 	for {
 		test.DoTestSendMsg2c2c(strMyUidx, "3380999461", i)
