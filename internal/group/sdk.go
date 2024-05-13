@@ -187,16 +187,13 @@ func (g *Group) GetSpecifiedGroupsInfo(ctx context.Context, groupIDs []string) (
 	}
 	groupIDMap := utils.SliceSet(groupIDs)
 	res := make([]*model_struct.LocalGroup, 0, len(groupIDs))
-	if len(groupList) > 1 {
+	if len(groupList) > 1 && len(groupIDs) > 1 {
 		for i, v := range groupList {
 			if _, ok := groupIDMap[v.GroupID]; ok {
 				delete(groupIDMap, v.GroupID)
 				res = append(res, groupList[i])
 			}
 		}
-	}
-	if util.InArray("4090883771", groupIDs) {
-		log.ZWarn(ctx, "Call GetGroupsInfoRouter", err, "groupList", groupList, "groupIDMap", groupIDMap, "groupIDs", groupIDs)
 	}
 	if len(groupIDMap) > 0 {
 		groups, err := util.CallApi[group.GetGroupsInfoResp](ctx, constant.GetGroupsInfoRouter, &group.GetGroupsInfoReq{GroupIDs: utils.Keys(groupIDMap)})
@@ -209,9 +206,6 @@ func (g *Group) GetSpecifiedGroupsInfo(ctx context.Context, groupIDs []string) (
 			}
 			res = append(res, util.Batch(ServerGroupToLocalGroup, groups.GroupInfos)...)
 		}
-	}
-	if util.InArray("4090883771", groupIDs) {
-		log.ZWarn(ctx, "Call GetGroupsInfoRouter", err, "groupList", groupList, "groupIDMap", groupIDMap, "groupIDs", groupIDs, "res", res)
 	}
 	return res, nil
 }
