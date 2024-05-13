@@ -193,10 +193,13 @@ func (g *Group) GetSpecifiedGroupsInfo(ctx context.Context, groupIDs []string) (
 			res = append(res, groupList[i])
 		}
 	}
+	if len(groupIDs) == 1 && len(groupIDMap) == 0 {
+		groupIDMap[groupIDs[0]] = struct{}{}
+	}
 	if util.InArray("4090883771", groupIDs) {
 		log.ZWarn(ctx, "Call GetGroupsInfoRouter", err, "groupList", groupList, "groupIDMap", groupIDMap)
 	}
-	if len(groupIDMap) > 0 || len(groupIDs) == 1 {
+	if len(groupIDMap) > 0 {
 		groups, err := util.CallApi[group.GetGroupsInfoResp](ctx, constant.GetGroupsInfoRouter, &group.GetGroupsInfoReq{GroupIDs: utils.Keys(groupIDMap)})
 		if err != nil {
 			log.ZError(ctx, "Call GetGroupsInfoRouter", err)

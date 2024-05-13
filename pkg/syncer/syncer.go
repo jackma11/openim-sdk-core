@@ -127,7 +127,6 @@ func (s *Syncer[T, V]) Sync(ctx context.Context, serverData []T, localData []T, 
 	for i, item := range localData {
 		localMap[s.uuid(item)] = localData[i]
 	}
-	log.ZWarn(ctx, "Sync-serverData", err, "ts", s.ts, "serverData-len", len(serverData), "serverData", serverData[0])
 	// Iterate through server data to sync with local data.
 	for i := range serverData {
 		server := serverData[i]
@@ -140,7 +139,14 @@ func (s *Syncer[T, V]) Sync(ctx context.Context, serverData []T, localData []T, 
 				log.ZError(ctx, "sync insert failed", err, "type", s.ts, "server", server, "local", local)
 				return err
 			}
-			if i == len(serverData)-1 {
+			if s.ts == "model_struct.LocalGroupMember" {
+				if i == len(serverData)-1 {
+					if err := s.onNotice(ctx, Insert, server, local, notice); err != nil {
+						log.ZError(ctx, "sync notice insert failed", err, "type", s.ts, "server", server, "local", local)
+						return err
+					}
+				}
+			} else {
 				if err := s.onNotice(ctx, Insert, server, local, notice); err != nil {
 					log.ZError(ctx, "sync notice insert failed", err, "type", s.ts, "server", server, "local", local)
 					return err
