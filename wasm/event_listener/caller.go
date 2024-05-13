@@ -122,7 +122,7 @@ func (r *ReflectCall) asyncCallWithCallback() {
 		}
 	}
 	funcName.Call(values)
-
+	log.ZDebug(ctx, "success")
 }
 func (r *ReflectCall) AsyncCallWithOutCallback() interface{} {
 	if r.callback == nil {
@@ -197,7 +197,7 @@ func (r *ReflectCall) asyncCallWithOutCallback() {
 			r.callback.SetErrCode(200).SetErrMsg(errors.New("null string").Error()).SendMessage()
 		}
 	}()
-
+	log.ZDebug(ctx, "success")
 }
 func (r *ReflectCall) SyncCall() (result []interface{}) {
 	defer func() {
