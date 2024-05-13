@@ -182,6 +182,7 @@ func (g *Group) GetJoinedGroupList(ctx context.Context) ([]*model_struct.LocalGr
 
 func (g *Group) GetSpecifiedGroupsInfo(ctx context.Context, groupIDs []string) ([]*model_struct.LocalGroup, error) {
 	groupList, err := g.db.GetJoinedGroupListDB(ctx)
+	log.ZWarn(ctx, "Call GetGroupsInfoRouter", err, "groupList", groupList)
 	if err != nil {
 		return nil, err
 	}
@@ -193,6 +194,7 @@ func (g *Group) GetSpecifiedGroupsInfo(ctx context.Context, groupIDs []string) (
 			res = append(res, groupList[i])
 		}
 	}
+	log.ZWarn(ctx, "Call GetGroupsInfoRouter", err, "groupList", groupList, "groupIDMap", groupIDMap)
 	if len(groupIDMap) > 0 {
 		groups, err := util.CallApi[group.GetGroupsInfoResp](ctx, constant.GetGroupsInfoRouter, &group.GetGroupsInfoReq{GroupIDs: utils.Keys(groupIDMap)})
 		if err != nil {
@@ -205,6 +207,7 @@ func (g *Group) GetSpecifiedGroupsInfo(ctx context.Context, groupIDs []string) (
 			res = append(res, util.Batch(ServerGroupToLocalGroup, groups.GroupInfos)...)
 		}
 	}
+	log.ZWarn(ctx, "Call GetGroupsInfoRouter", err, "groupList", groupList, "groupIDMap", groupIDMap, "res", res)
 	return res, nil
 }
 

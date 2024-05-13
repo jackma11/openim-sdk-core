@@ -140,9 +140,11 @@ func (s *Syncer[T, V]) Sync(ctx context.Context, serverData []T, localData []T, 
 				log.ZError(ctx, "sync insert failed", err, "type", s.ts, "server", server, "local", local)
 				return err
 			}
-			if err := s.onNotice(ctx, Insert, server, local, notice); err != nil {
-				log.ZError(ctx, "sync notice insert failed", err, "type", s.ts, "server", server, "local", local)
-				return err
+			if i == len(serverData)-1 {
+				if err := s.onNotice(ctx, Insert, server, local, notice); err != nil {
+					log.ZError(ctx, "sync notice insert failed", err, "type", s.ts, "server", server, "local", local)
+					return err
+				}
 			}
 			continue
 		}
