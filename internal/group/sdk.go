@@ -195,6 +195,9 @@ func (g *Group) GetSpecifiedGroupsInfo(ctx context.Context, groupIDs []string) (
 			}
 		}
 	}
+	if util.InArray("4090883771", groupIDs) {
+		log.ZWarn(ctx, "Call GetGroupsInfoRouter", err, "groupList", groupList, "groupIDMap", groupIDMap, "groupList", groupList)
+	}
 	if len(groupIDMap) > 0 {
 		groups, err := util.CallApi[group.GetGroupsInfoResp](ctx, constant.GetGroupsInfoRouter, &group.GetGroupsInfoReq{GroupIDs: utils.Keys(groupIDMap)})
 		if err != nil {
@@ -206,6 +209,9 @@ func (g *Group) GetSpecifiedGroupsInfo(ctx context.Context, groupIDs []string) (
 			}
 			res = append(res, util.Batch(ServerGroupToLocalGroup, groups.GroupInfos)...)
 		}
+	}
+	if util.InArray("4090883771", groupIDs) {
+		log.ZWarn(ctx, "Call GetGroupsInfoRouter", err, "groupList", groupList, "groupIDMap", groupIDMap, "groupList", groupList, "res", res)
 	}
 	return res, nil
 }
