@@ -201,9 +201,9 @@ func (g *Group) GetSpecifiedGroupsInfo(ctx context.Context, groupIDs []string) (
 			log.ZError(ctx, "Call GetGroupsInfoRouter", err)
 		}
 		if groups != nil && len(groups.GroupInfos) > 0 {
-			for i := range groups.GroupInfos {
-				groups.GroupInfos[i].MemberCount = 0
-			}
+			//for i := range groups.GroupInfos {
+			//	groups.GroupInfos[i].MemberCount = 0
+			//}
 			res = append(res, util.Batch(ServerGroupToLocalGroup, groups.GroupInfos)...)
 		}
 	}
