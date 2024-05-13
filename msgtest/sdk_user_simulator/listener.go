@@ -6,6 +6,12 @@ import (
 	"github.com/openimsdk/openim-sdk-core/v3/sdk_struct"
 )
 
+var timeOffset int64
+
+func GetRelativeServerTime() int64 {
+	return utils.GetCurrentTimestampByMill() + timeOffset
+}
+
 type conversationCallBack struct {
 }
 

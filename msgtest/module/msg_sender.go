@@ -174,6 +174,8 @@ func (b *SendMsgUser) defaultRecvPushMsgCallback(msg *sdkws.MsgData) {
 type ConnListner struct {
 }
 
+func (c *ConnListner) OnUserTokenInvalid(errMsg string) {}
+
 func (c *ConnListner) OnConnecting()     {}
 func (c *ConnListner) OnConnectSuccess() {}
 func (c *ConnListner) OnConnectFailed(errCode int32, errMsg string) {
