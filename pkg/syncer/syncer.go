@@ -52,8 +52,8 @@ func New[T any, V comparable](
 		tof = tof.Elem()
 	}
 
-	pool, _ := ants.NewPool(200, ants.WithExpiryDuration(60*time.Second), ants.WithPreAlloc(true))
-	pool.Tune(500)
+	pool, _ := ants.NewPool(20, ants.WithExpiryDuration(60*time.Second), ants.WithPreAlloc(true))
+	pool.Tune(50)
 
 	// Return a new Syncer instance with the provided functions and the type as a string.
 	return &Syncer[T, V]{
