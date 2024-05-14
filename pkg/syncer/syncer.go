@@ -16,12 +16,9 @@ package syncer
 
 import (
 	"context"
-	"github.com/google/go-cmp/cmp"
-	"github.com/panjf2000/ants/v2"
-	"reflect"
-	"time"
-
 	"github.com/OpenIMSDK/tools/log"
+	"github.com/google/go-cmp/cmp"
+	"reflect"
 )
 
 // New creates a new Syncer instance with the provided synchronization functions.
@@ -52,9 +49,6 @@ func New[T any, V comparable](
 		tof = tof.Elem()
 	}
 
-	pool, _ := ants.NewPool(10, ants.WithExpiryDuration(60*time.Second), ants.WithPreAlloc(true))
-	pool.Tune(30)
-
 	// Return a new Syncer instance with the provided functions and the type as a string.
 	return &Syncer[T, V]{
 		insert: insert,
@@ -64,7 +58,6 @@ func New[T any, V comparable](
 		equal:  equal,
 		notice: notice,
 		ts:     tof.String(),
-		pool:   pool,
 	}
 }
 
@@ -79,7 +72,6 @@ type Syncer[T any, V comparable] struct {
 	equal  func(server T, local T) bool
 	uuid   func(value T) V
 	ts     string // Represents the type of T as a string.
-	pool   *ants.Pool
 }
 
 // eq is a helper function to check equality of two data items.
@@ -142,25 +134,23 @@ func (s *Syncer[T, V]) Sync(ctx context.Context, serverData []T, localData []T, 
 
 		// If the item doesn't exist locally, insert it.
 		if !ok {
-			_ = s.pool.Submit(func() {
-				if err := s.insert(ctx, server); err != nil {
-					log.ZError(ctx, "sync insert failed", err, "type", s.ts, "server", server, "local", local)
-					return
-				}
-				if s.ts == "model_struct.LocalGroupMember" {
-					if i == len(serverData)-1 {
-						if err := s.onNotice(ctx, Insert, server, local, notice); err != nil {
-							log.ZError(ctx, "sync notice insert failed", err, "type", s.ts, "server", server, "local", local)
-							return
-						}
-					}
-				} else {
+			if err := s.insert(ctx, server); err != nil {
+				log.ZError(ctx, "sync insert failed", err, "type", s.ts, "server", server, "local", local)
+				return
+			}
+			if s.ts == "model_struct.LocalGroupMember" {
+				if i == len(serverData)-1 {
 					if err := s.onNotice(ctx, Insert, server, local, notice); err != nil {
 						log.ZError(ctx, "sync notice insert failed", err, "type", s.ts, "server", server, "local", local)
 						return
 					}
 				}
-			})
+			} else {
+				if err := s.onNotice(ctx, Insert, server, local, notice); err != nil {
+					log.ZError(ctx, "sync notice insert failed", err, "type", s.ts, "server", server, "local", local)
+					return
+				}
+			}
 			continue
 		}
 
