@@ -170,3 +170,8 @@ fabric.properties
 # CodeStream plugin
 # https://plugins.jetbrains.com/plugin/12206-codestream
 .idea/codestream.xml
+build.sh
+wasm/*
+open_im_sdk.aar
+open_im_sdk-sources.jar
+build/*
