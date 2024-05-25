@@ -28,6 +28,7 @@ import (
 	"github.com/OpenIMSDK/tools/errs"
 	"github.com/OpenIMSDK/tools/log"
 	"gorm.io/gorm"
+	"strings"
 )
 
 func (d *DataBase) GetConversationByUserID(ctx context.Context, userID string) (*model_struct.LocalConversation, error) {
@@ -40,8 +41,36 @@ func (d *DataBase) GetAllConversationListDB(ctx context.Context) ([]*model_struc
 	d.mRWMutex.Lock()
 	defer d.mRWMutex.Unlock()
 	var conversationList []*model_struct.LocalConversation
-	err := utils.Wrap(d.conn.WithContext(ctx).Where("latest_msg_send_time > ?", 0).Order("case when is_pinned=1 then 0 else 1 end,max(latest_msg_send_time,draft_text_time) DESC").Find(&conversationList).Error,
-		"GetAllConversationList failed")
+	var err error
+
+	queryFunc := func() error {
+		return utils.Wrap(
+			d.conn.WithContext(ctx).
+				Where("latest_msg_send_time > ?", 0).
+				Order("case when is_pinned=1 then 0 else 1 end,max(latest_msg_send_time,draft_text_time) DESC").
+				Find(&conversationList).Error,
+			"GetAllConversationList failed")
+	}
+
+	err = queryFunc()
+	if err != nil && strings.Contains(err.Error(), "disk I/O error: read-only file system") {
+		log.ZError(ctx, "Encountered disk I/O error, attempting to reset the database connection", err)
+
+		if closeErr := d.Close(ctx); closeErr != nil {
+			log.ZError(ctx, "Failed to close database connection", closeErr)
+			return nil, utils.Wrap(closeErr, "Failed to close database connection")
+		}
+
+		newDataBase, initErr := NewDataBase(ctx, d.loginUserID, d.dbDir, 5)
+		if initErr != nil {
+			log.ZError(ctx, "Failed to reinitialize database connection", initErr)
+			return nil, utils.Wrap(initErr, "Failed to reinitialize database connection")
+		}
+		d.conn = newDataBase.conn
+
+		err = queryFunc()
+	}
+
 	if err != nil {
 		return nil, err
 	}
