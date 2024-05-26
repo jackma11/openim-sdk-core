@@ -174,3 +174,23 @@ func GetPageAll[A interface {
 	}
 	return res, nil
 }
+
+// GetPage 分页请求获取数据
+func GetPage[A interface {
+	GetPagination() *sdkws.RequestPagination
+}, B, C any](ctx context.Context, api string, req A, fn func(resp *B) []C) ([]C, error) {
+	if req.GetPagination().ShowNumber <= 0 {
+		req.GetPagination().ShowNumber = 50
+	}
+	var res []C
+	if req.GetPagination().PageNumber <= 0 {
+		req.GetPagination().PageNumber = 1
+	}
+	memberResp, err := CallApi[B](ctx, api, req)
+	if err != nil {
+		return nil, err
+	}
+	list := fn(memberResp)
+	res = append(res, list...)
+	return res, nil
+}

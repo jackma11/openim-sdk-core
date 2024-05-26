@@ -633,7 +633,7 @@ func (c *Conversation) doNotificationNew(c2v common.Cmd2Value) {
 		for _, syncFunc := range []func(c context.Context) error{
 			c.user.SyncLoginUserInfo,
 			c.friend.SyncAllBlackList,
-			//c.friend.SyncAllFriendList,
+			c.friend.SyncAllFriendList,
 			//c.friend.SyncAllFriendApplication,
 			//c.friend.SyncAllSelfFriendApplication,
 			//c.group.SyncAllJoinedGroupsAndMembers,

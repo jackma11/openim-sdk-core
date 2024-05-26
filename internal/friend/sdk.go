@@ -16,6 +16,7 @@ package friend
 
 import (
 	"context"
+	"github.com/OpenIMSDK/protocol/sdkws"
 	"github.com/OpenIMSDK/protocol/wrapperspb"
 	"github.com/OpenIMSDK/tools/errs"
 	"github.com/openimsdk/openim-sdk-core/v3/internal/util"
@@ -165,9 +166,28 @@ func (f *Friend) GetFriendList(ctx context.Context) ([]*server_api_params.FullUs
 }
 
 func (f *Friend) GetFriendListPage(ctx context.Context, offset, count int32) ([]*server_api_params.FullUserInfo, error) {
-	localFriendList, err := f.db.GetPageFriendList(ctx, int(offset), int(count))
+	req := &friend.GetPaginationFriendsReq{UserID: f.loginUserID, Pagination: &sdkws.RequestPagination{}}
+	req.GetPagination().ShowNumber = count
+	req.GetPagination().PageNumber = offset
+	fn := func(resp *friend.GetPaginationFriendsResp) []*sdkws.FriendInfo { return resp.FriendsInfo }
+	friendList, err := util.GetPage(ctx, constant.GetFriendListRouter, req, fn)
 	if err != nil {
 		return nil, err
+	}
+	var localFriendList []*model_struct.LocalFriend
+	for _, friendInfo := range friendList {
+		localFriendInfo := &model_struct.LocalFriend{}
+		localFriendInfo.OwnerUserID = friendInfo.OwnerUserID
+		localFriendInfo.FriendUserID = friendInfo.FriendUser.UserID
+		localFriendInfo.Remark = friendInfo.Remark
+		localFriendInfo.CreateTime = friendInfo.CreateTime
+		localFriendInfo.AddSource = friendInfo.AddSource
+		localFriendInfo.OperatorUserID = friendInfo.OperatorUserID
+		localFriendInfo.Nickname = friendInfo.FriendUser.Nickname
+		localFriendInfo.FaceURL = friendInfo.FriendUser.FaceURL
+		localFriendInfo.Ex = friendInfo.Ex
+		localFriendInfo.IsPinned = friendInfo.IsPinned
+		localFriendList = append(localFriendList, localFriendInfo)
 	}
 	localBlackList, err := f.db.GetBlackListDB(ctx)
 	if err != nil {
