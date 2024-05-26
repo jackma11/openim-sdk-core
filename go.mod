@@ -19,7 +19,6 @@ require (
 	github.com/OpenIMSDK/protocol v0.0.40
 	github.com/OpenIMSDK/tools v0.0.24
 	github.com/google/go-cmp v0.5.9
-	github.com/panjf2000/ants/v2 v2.9.1
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	golang.org/x/image v0.14.0
 	gorm.io/gorm v1.23.8

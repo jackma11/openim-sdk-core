@@ -38,6 +38,7 @@ type MessageRevoked struct {
 	SourceMessageSendTime       int64  `json:"sourceMessageSendTime"`
 	SourceMessageSendID         string `json:"sourceMessageSendID"`
 	SourceMessageSenderNickname string `json:"sourceMessageSenderNickname"`
+	ConversationID              string `json:"conversationID"`
 	SessionType                 int32  `json:"sessionType"`
 	Seq                         int64  `json:"seq"`
 	Ex                          string `json:"ex"`

@@ -81,6 +81,7 @@ func (c *Conversation) revokeMessage(ctx context.Context, tips *sdkws.RevokeMsgT
 		SourceMessageSendTime:       revokedMsg.SendTime,
 		SourceMessageSendID:         revokedMsg.SendID,
 		SourceMessageSenderNickname: revokedMsg.SenderNickname,
+		ConversationID:              tips.ConversationID,
 		SessionType:                 tips.SesstionType,
 		Seq:                         tips.Seq,
 		Ex:                          revokedMsg.Ex,
