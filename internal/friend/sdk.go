@@ -167,28 +167,14 @@ func (f *Friend) GetFriendList(ctx context.Context) ([]*server_api_params.FullUs
 
 func (f *Friend) GetFriendListPage(ctx context.Context, offset, count int32) ([]*server_api_params.FullUserInfo, error) {
 	req := &friend.GetPaginationFriendsReq{UserID: f.loginUserID, Pagination: &sdkws.RequestPagination{}}
-	req.GetPagination().ShowNumber = count
 	req.GetPagination().PageNumber = offset
+	req.GetPagination().ShowNumber = count
 	fn := func(resp *friend.GetPaginationFriendsResp) []*sdkws.FriendInfo { return resp.FriendsInfo }
 	friendList, err := util.GetPage(ctx, constant.GetFriendListRouter, req, fn)
 	if err != nil {
 		return nil, err
 	}
-	var localFriendList []*model_struct.LocalFriend
-	for _, friendInfo := range friendList {
-		localFriendInfo := &model_struct.LocalFriend{}
-		localFriendInfo.OwnerUserID = friendInfo.OwnerUserID
-		localFriendInfo.FriendUserID = friendInfo.FriendUser.UserID
-		localFriendInfo.Remark = friendInfo.Remark
-		localFriendInfo.CreateTime = friendInfo.CreateTime
-		localFriendInfo.AddSource = friendInfo.AddSource
-		localFriendInfo.OperatorUserID = friendInfo.OperatorUserID
-		localFriendInfo.Nickname = friendInfo.FriendUser.Nickname
-		localFriendInfo.FaceURL = friendInfo.FriendUser.FaceURL
-		localFriendInfo.Ex = friendInfo.Ex
-		localFriendInfo.IsPinned = friendInfo.IsPinned
-		localFriendList = append(localFriendList, localFriendInfo)
-	}
+	localFriendList := util.Batch(ServerFriendToLocalFriend, friendList)
 	localBlackList, err := f.db.GetBlackListDB(ctx)
 	if err != nil {
 		return nil, err
@@ -204,6 +190,16 @@ func (f *Friend) GetFriendListPage(ctx context.Context, offset, count int32) ([]
 			FriendInfo: localFriend,
 			BlackInfo:  m[localFriend.FriendUserID],
 		})
+	}
+	//同步到本地
+	localData, err := f.db.GetAllFriendList(ctx)
+	if err != nil {
+		return res, err
+	}
+	log.ZDebug(ctx, "sync friend", "data from server", friendList, "data from local", localData)
+	err = f.friendSyncer.Sync(ctx, localFriendList, localData, nil)
+	if err != nil {
+		return res, err
 	}
 	return res, nil
 }
