@@ -28,7 +28,6 @@ import (
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/constant"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/db/model_struct"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/utils"
-	"sync"
 )
 
 func (g *Group) getGroupHash(members []*model_struct.LocalGroupMember) uint64 {
@@ -170,21 +169,21 @@ func (g *Group) SyncAllJoinedGroupsAndMembers(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	groups, err := g.db.GetJoinedGroupListDB(ctx)
+	_, err = g.db.GetJoinedGroupListDB(ctx)
 	if err != nil {
 		return err
 	}
-	var wg sync.WaitGroup
-	for _, group := range groups {
-		wg.Add(1)
-		go func(groupID string) {
-			defer wg.Done()
-			if err := g.SyncAllGroupMember(ctx, groupID); err != nil {
-				log.ZError(ctx, "SyncGroupMember failed", err)
-			}
-		}(group.GroupID)
-	}
-	wg.Wait()
+	//var wg sync.WaitGroup
+	//for _, group := range groups {
+	//	wg.Add(1)
+	//	go func(groupID string) {
+	//		defer wg.Done()
+	//		if err := g.SyncAllGroupMember(ctx, groupID); err != nil {
+	//			log.ZError(ctx, "SyncGroupMember failed", err)
+	//		}
+	//	}(group.GroupID)
+	//}
+	//wg.Wait()
 	return nil
 }
 func (g *Group) syncAllJoinedGroups(ctx context.Context) ([]*sdkws.GroupInfo, error) {

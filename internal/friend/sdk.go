@@ -191,16 +191,6 @@ func (f *Friend) GetFriendListPage(ctx context.Context, offset, count int32) ([]
 			BlackInfo:  m[localFriend.FriendUserID],
 		})
 	}
-	//同步到本地
-	localData, err := f.db.GetAllFriendList(ctx)
-	if err != nil {
-		return res, err
-	}
-	log.ZDebug(ctx, "sync friend", "data from server", friendList, "data from local", localData)
-	err = f.friendSyncer.Sync(ctx, localFriendList, localData, nil)
-	if err != nil {
-		return res, err
-	}
 	return res, nil
 }
 

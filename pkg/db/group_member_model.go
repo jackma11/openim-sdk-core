@@ -21,6 +21,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/OpenIMSDK/protocol/group"
+	"github.com/OpenIMSDK/protocol/sdkws"
+	group2 "github.com/openimsdk/openim-sdk-core/v3/internal/group"
+	"github.com/openimsdk/openim-sdk-core/v3/internal/util"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/constant"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/db/model_struct"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/utils"
@@ -86,32 +90,13 @@ func (d *DataBase) GetGroupMemberListByGroupID(ctx context.Context, groupID stri
 	}
 	return transfer, utils.Wrap(err, "GetGroupMemberListByGroupID failed ")
 }
-func (d *DataBase) GetGroupMemberListSplit(ctx context.Context, groupID string, filter int32, offset, count int) ([]*model_struct.LocalGroupMember, error) {
-	d.groupMtx.Lock()
-	defer d.groupMtx.Unlock()
-	var groupMemberList []model_struct.LocalGroupMember
-	var err error
-	switch filter {
-	case constant.GroupFilterAll:
-		err = d.conn.WithContext(ctx).Where("group_id = ?", groupID).Order("role_level DESC,join_time ASC").Offset(offset).Limit(count).Find(&groupMemberList).Error
-	case constant.GroupFilterOwner:
-		err = d.conn.WithContext(ctx).Where("group_id = ? And role_level = ?", groupID, constant.GroupOwner).Offset(offset).Limit(count).Find(&groupMemberList).Error
-	case constant.GroupFilterAdmin:
-		err = d.conn.WithContext(ctx).Where("group_id = ? And role_level = ?", groupID, constant.GroupAdmin).Order("join_time ASC").Offset(offset).Limit(count).Find(&groupMemberList).Error
-	case constant.GroupFilterOrdinaryUsers:
-		err = d.conn.WithContext(ctx).Where("group_id = ? And role_level = ?", groupID, constant.GroupOrdinaryUsers).Order("join_time ASC").Offset(offset).Limit(count).Find(&groupMemberList).Error
-	case constant.GroupFilterAdminAndOrdinaryUsers:
-		err = d.conn.WithContext(ctx).Where("group_id = ? And (role_level = ? or role_level = ?)", groupID, constant.GroupAdmin, constant.GroupOrdinaryUsers).Order("role_level DESC,join_time ASC").Offset(offset).Limit(count).Find(&groupMemberList).Error
-	case constant.GroupFilterOwnerAndAdmin:
-		err = d.conn.WithContext(ctx).Where("group_id = ? And (role_level = ? or role_level = ?)", groupID, constant.GroupOwner, constant.GroupAdmin).Order("role_level DESC,join_time ASC").Offset(offset).Limit(count).Find(&groupMemberList).Error
-	default:
-		return nil, fmt.Errorf("filter args failed %d", filter)
-	}
-	var transfer []*model_struct.LocalGroupMember
-	for _, v := range groupMemberList {
-		v1 := v
-		transfer = append(transfer, &v1)
-	}
+func (d *DataBase) GetGroupMemberListSplit(ctx context.Context, groupID string, Keyword string, offset, count int32) ([]*model_struct.LocalGroupMember, error) {
+	req := &group.GetGroupMemberListReq{GroupID: groupID, Keyword: Keyword, Pagination: &sdkws.RequestPagination{}}
+	req.Pagination.PageNumber = offset
+	req.Pagination.ShowNumber = count
+	fn := func(resp *group.GetGroupMemberListResp) []*sdkws.GroupMemberFullInfo { return resp.Members }
+	groupMemberList, err := util.GetPage(ctx, constant.GetGroupMemberListRouter, req, fn)
+	transfer := util.Batch(group2.ServerGroupMemberToLocalGroupMember, groupMemberList)
 	return transfer, utils.Wrap(err, "GetGroupMemberListSplit failed ")
 }
 
