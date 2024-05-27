@@ -636,7 +636,7 @@ func (c *Conversation) doNotificationNew(c2v common.Cmd2Value) {
 			//c.friend.SyncAllFriendList,
 			//c.friend.SyncAllFriendApplication,
 			//c.friend.SyncAllSelfFriendApplication,
-			//c.group.SyncAllJoinedGroupsAndMembers,
+			c.group.SyncAllJoinedGroupsAndMembers,
 			//c.group.SyncAllAdminGroupApplication,
 			//c.group.SyncAllSelfGroupApplication,
 		} {
