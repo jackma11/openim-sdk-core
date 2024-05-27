@@ -3,5 +3,5 @@ Android：make android
 Ios: make ios
 
 web:
-cd wasm/bin
+cd wasm/cmd
 make wasm
