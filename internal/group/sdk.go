@@ -257,7 +257,13 @@ func (g *Group) GetGroupMemberList(ctx context.Context, groupID string, Keyword 
 }
 
 func (g *Group) GetGroupMemberPageList(ctx context.Context, groupID string, Keyword string, offset, count int32) ([]*model_struct.LocalGroupMember, error) {
-	return g.db.GetGroupMemberListSplit(ctx, groupID, Keyword, int(offset), int(count))
+	req := &group.GetGroupMemberListReq{GroupID: groupID, Keyword: Keyword, Pagination: &sdkws.RequestPagination{}}
+	req.Pagination.PageNumber = offset
+	req.Pagination.ShowNumber = count
+	fn := func(resp *group.GetGroupMemberListResp) []*sdkws.GroupMemberFullInfo { return resp.Members }
+	groupMemberList, err := util.GetPage(ctx, constant.GetGroupMemberListRouter, req, fn)
+	transfer := util.Batch(ServerGroupMemberToLocalGroupMember, groupMemberList)
+	return transfer, utils.Wrap(err, "GetGroupMemberListSplit failed ")
 }
 
 func (g *Group) GetGroupMemberOwnerAndAdmin(ctx context.Context, groupID string) ([]*model_struct.LocalGroupMember, error) {
