@@ -21,6 +21,7 @@ option go_package = "github.com/OpenIMSDK/protocol/friend";
 message getPaginationFriendsReq{
   sdkws.RequestPagination pagination = 1;
   string userID = 2;
+  string keyword = 3;
 }
 message getPaginationFriendsResp{
   repeated sdkws.FriendInfo friendsInfo = 1;

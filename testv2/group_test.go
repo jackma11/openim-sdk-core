@@ -287,7 +287,7 @@ func Test_GetGroupMemberList(t *testing.T) {
 		constant.GroupOrdinaryUsers: "成员",
 	}
 
-	members, err := open_im_sdk.UserForSDK.Group().GetGroupMemberList(ctx, "3889561099", 0, 0, 9999999)
+	members, err := open_im_sdk.UserForSDK.Group().GetGroupMemberList(ctx, "3889561099", "", 0, 9999999)
 	if err != nil {
 		panic(err)
 	}

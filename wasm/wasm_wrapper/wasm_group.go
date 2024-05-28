@@ -108,6 +108,11 @@ func (w *WrapperGroup) GetGroupMemberList(_ js.Value, args []js.Value) interface
 	return event_listener.NewCaller(open_im_sdk.GetGroupMemberList, callback, &args).AsyncCallWithCallback()
 }
 
+func (w *WrapperGroup) GetGroupMemberPageList(_ js.Value, args []js.Value) interface{} {
+	callback := event_listener.NewBaseCallback(utils.FirstLower(utils.GetSelfFuncName()), w.commonFunc)
+	return event_listener.NewCaller(open_im_sdk.GetGroupMemberPageList, callback, &args).AsyncCallWithCallback()
+}
+
 func (w *WrapperGroup) GetGroupMemberOwnerAndAdmin(_ js.Value, args []js.Value) interface{} {
 	callback := event_listener.NewBaseCallback(utils.FirstLower(utils.GetSelfFuncName()), w.commonFunc)
 	return event_listener.NewCaller(open_im_sdk.GetGroupMemberOwnerAndAdmin, callback, &args).AsyncCallWithCallback()

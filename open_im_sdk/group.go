@@ -14,7 +14,9 @@
 
 package open_im_sdk
 
-import "github.com/openimsdk/openim-sdk-core/v3/open_im_sdk_callback"
+import (
+	"github.com/openimsdk/openim-sdk-core/v3/open_im_sdk_callback"
+)
 
 //funcation CreateGroup(callback open_im_sdk_callback.Base, operationID string, groupBaseInfo string, memberList string) {
 //	call(callback, operationID, UserForSDK.Group().CreateGroup, groupBaseInfo, memberList)
@@ -82,6 +84,10 @@ func SetGroupApplyMemberFriend(callback open_im_sdk_callback.Base, operationID s
 
 func GetGroupMemberList(callback open_im_sdk_callback.Base, operationID string, groupID string, keyword string, offset int32, count int32) {
 	call(callback, operationID, UserForSDK.Group().GetGroupMemberList, groupID, keyword, offset, count)
+}
+
+func GetGroupMemberPageList(callback open_im_sdk_callback.Base, operationID string, groupID string, keyword string, offset int32, count int32) {
+	call(callback, operationID, UserForSDK.Group().GetGroupMemberPageList, groupID, keyword, offset, count)
 }
 
 func GetGroupMemberOwnerAndAdmin(callback open_im_sdk_callback.Base, operationID string, groupID string) {

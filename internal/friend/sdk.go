@@ -165,8 +165,8 @@ func (f *Friend) GetFriendList(ctx context.Context) ([]*server_api_params.FullUs
 	return res, nil
 }
 
-func (f *Friend) GetFriendListPage(ctx context.Context, offset, count int32) ([]*server_api_params.FullUserInfo, error) {
-	req := &friend.GetPaginationFriendsReq{UserID: f.loginUserID, Pagination: &sdkws.RequestPagination{}}
+func (f *Friend) GetFriendListPage(ctx context.Context, keyword string, offset, count int32) ([]*server_api_params.FullUserInfo, error) {
+	req := &friend.GetPaginationFriendsReq{UserID: f.loginUserID, Keyword: keyword, Pagination: &sdkws.RequestPagination{}}
 	req.GetPagination().PageNumber = offset
 	req.GetPagination().ShowNumber = count
 	fn := func(resp *friend.GetPaginationFriendsResp) []*sdkws.FriendInfo { return resp.FriendsInfo }

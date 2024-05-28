@@ -148,8 +148,8 @@ func (i *LocalGroupMember) GetGroupMemberListByGroupID(ctx context.Context, grou
 	}
 }
 
-func (i *LocalGroupMember) GetGroupMemberListSplit(ctx context.Context, groupID string, filter int32, offset, count int) ([]*model_struct.LocalGroupMember, error) {
-	member, err := exec.Exec(groupID, filter, offset, count)
+func (i *LocalGroupMember) GetGroupMemberListSplit(ctx context.Context, groupID string, keyword string, offset, count int) ([]*model_struct.LocalGroupMember, error) {
+	member, err := exec.Exec(groupID, keyword, offset, count)
 	if err != nil {
 		return nil, err
 	} else {
