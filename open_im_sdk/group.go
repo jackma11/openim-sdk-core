@@ -80,8 +80,8 @@ func SetGroupApplyMemberFriend(callback open_im_sdk_callback.Base, operationID s
 	call(callback, operationID, UserForSDK.Group().SetGroupApplyMemberFriend, groupID, rule)
 }
 
-func GetGroupMemberList(callback open_im_sdk_callback.Base, operationID string, groupID string, filter int32, offset int32, count int32) {
-	call(callback, operationID, UserForSDK.Group().GetGroupMemberList, groupID, filter, offset, count)
+func GetGroupMemberList(callback open_im_sdk_callback.Base, operationID string, groupID string, keyword string, offset int32, count int32) {
+	call(callback, operationID, UserForSDK.Group().GetGroupMemberList, groupID, keyword, offset, count)
 }
 
 func GetGroupMemberOwnerAndAdmin(callback open_im_sdk_callback.Base, operationID string, groupID string) {
