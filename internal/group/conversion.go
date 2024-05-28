@@ -48,6 +48,7 @@ func ServerGroupMemberToLocalGroupMember(info *sdkws.GroupMemberFullInfo) *model
 		GroupID:        info.GroupID,
 		UserID:         info.UserID,
 		Nickname:       info.Nickname,
+		Remark:         info.Remark,
 		FaceURL:        info.FaceURL,
 		RoleLevel:      info.RoleLevel,
 		JoinTime:       info.JoinTime,
