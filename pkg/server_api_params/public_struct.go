@@ -40,6 +40,7 @@ type PublicUser struct {
 }
 
 type FullUserInfo struct {
+	Total      int32                     `json:"total"`
 	PublicInfo *PublicUser               `json:"publicInfo"`
 	FriendInfo *model_struct.LocalFriend `json:"friendInfo"`
 	BlackInfo  *model_struct.LocalBlack  `json:"blackInfo"`

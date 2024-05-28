@@ -169,8 +169,10 @@ func (f *Friend) GetFriendListPage(ctx context.Context, keyword string, offset, 
 	req := &friend.GetPaginationFriendsReq{UserID: f.loginUserID, Keyword: keyword, Pagination: &sdkws.RequestPagination{}}
 	req.GetPagination().PageNumber = offset
 	req.GetPagination().ShowNumber = count
-	fn := func(resp *friend.GetPaginationFriendsResp) []*sdkws.FriendInfo { return resp.FriendsInfo }
-	friendList, err := util.GetPage(ctx, constant.GetFriendListRouter, req, fn)
+	fn := func(resp *friend.GetPaginationFriendsResp) ([]*sdkws.FriendInfo, int32) {
+		return resp.FriendsInfo, resp.Total
+	}
+	friendList, count, err := util.GetPageTotal(ctx, constant.GetFriendListRouter, req, fn)
 	if err != nil {
 		return nil, err
 	}
@@ -186,6 +188,7 @@ func (f *Friend) GetFriendListPage(ctx context.Context, keyword string, offset, 
 	res := make([]*server_api_params.FullUserInfo, 0, len(localFriendList))
 	for _, localFriend := range localFriendList {
 		res = append(res, &server_api_params.FullUserInfo{
+			Total:      count,
 			PublicInfo: nil,
 			FriendInfo: localFriend,
 			BlackInfo:  m[localFriend.FriendUserID],

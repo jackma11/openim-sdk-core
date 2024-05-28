@@ -194,3 +194,24 @@ func GetPage[A interface {
 	res = append(res, list...)
 	return res, nil
 }
+
+// GetPageTotal 分页请求获取数据包含总数
+func GetPageTotal[A interface {
+	GetPagination() *sdkws.RequestPagination
+}, B, C, D any](ctx context.Context, api string, req A, fn func(resp *B) ([]C, D)) ([]C, D, error) {
+	if req.GetPagination().ShowNumber <= 0 {
+		req.GetPagination().ShowNumber = 50
+	}
+	var res []C
+	if req.GetPagination().PageNumber <= 0 {
+		req.GetPagination().PageNumber = 1
+	}
+	var count D
+	memberResp, err := CallApi[B](ctx, api, req)
+	if err != nil {
+		return nil, count, err
+	}
+	list, count := fn(memberResp)
+	res = append(res, list...)
+	return res, count, nil
+}
