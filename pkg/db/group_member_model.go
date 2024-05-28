@@ -90,10 +90,10 @@ func (d *DataBase) GetGroupMemberListByGroupID(ctx context.Context, groupID stri
 	}
 	return transfer, utils.Wrap(err, "GetGroupMemberListByGroupID failed ")
 }
-func (d *DataBase) GetGroupMemberListSplit(ctx context.Context, groupID string, Keyword string, offset, count int32) ([]*model_struct.LocalGroupMember, error) {
+func (d *DataBase) GetGroupMemberListSplit(ctx context.Context, groupID string, Keyword string, offset, count int) ([]*model_struct.LocalGroupMember, error) {
 	req := &group.GetGroupMemberListReq{GroupID: groupID, Keyword: Keyword, Pagination: &sdkws.RequestPagination{}}
-	req.Pagination.PageNumber = offset
-	req.Pagination.ShowNumber = count
+	req.Pagination.PageNumber = int32(offset)
+	req.Pagination.ShowNumber = int32(count)
 	fn := func(resp *group.GetGroupMemberListResp) []*sdkws.GroupMemberFullInfo { return resp.Members }
 	groupMemberList, err := util.GetPage(ctx, constant.GetGroupMemberListRouter, req, fn)
 	transfer := util.Batch(group2.ServerGroupMemberToLocalGroupMember, groupMemberList)

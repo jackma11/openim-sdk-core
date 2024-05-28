@@ -112,7 +112,7 @@ func (g *Group) doNotification(ctx context.Context, msg *sdkws.MsgData) error {
 			}
 		}
 		if self {
-			members, err := g.db.GetGroupMemberListSplit(ctx, detail.Group.GroupID, 0, 0, 999999)
+			members, err := g.db.GetGroupMemberListSplit(ctx, detail.Group.GroupID, "", 0, 999999)
 			if err != nil {
 				return err
 			}
@@ -154,7 +154,7 @@ func (g *Group) doNotification(ctx context.Context, msg *sdkws.MsgData) error {
 			return err
 		}
 		if detail.QuitUser.UserID == g.loginUserID {
-			members, err := g.db.GetGroupMemberListSplit(ctx, detail.Group.GroupID, 0, 0, 999999)
+			members, err := g.db.GetGroupMemberListSplit(ctx, detail.Group.GroupID, "", 0, 999999)
 			if err != nil {
 				return err
 			}

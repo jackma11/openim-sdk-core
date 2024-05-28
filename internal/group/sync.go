@@ -66,7 +66,7 @@ func (g *Group) SyncAllGroupMember(ctx context.Context, groupID string) error {
 	if err != nil {
 		return err
 	}
-	localData, err := g.db.GetGroupMemberListSplit(ctx, groupID, 0, 0, 9999999)
+	localData, err := g.db.GetGroupMemberListSplit(ctx, groupID, "", 0, 9999999)
 	if err != nil {
 		return err
 	}

@@ -253,7 +253,7 @@ func (g *Group) SetGroupInfo(ctx context.Context, groupInfo *sdkws.GroupInfoForS
 }
 
 func (g *Group) GetGroupMemberList(ctx context.Context, groupID string, filter, offset, count int32) ([]*model_struct.LocalGroupMember, error) {
-	return g.db.GetGroupMemberListSplit(ctx, groupID, filter, int(offset), int(count))
+	return g.db.GetGroupMemberListSplit(ctx, groupID, "", int(offset), int(count))
 }
 
 func (g *Group) GetGroupMemberOwnerAndAdmin(ctx context.Context, groupID string) ([]*model_struct.LocalGroupMember, error) {
