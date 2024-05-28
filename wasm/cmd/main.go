@@ -143,6 +143,7 @@ func registerFunc() {
 	js.Global().Set("setGroupLookMemberInfo", js.FuncOf(wrapperGroup.SetGroupLookMemberInfo))
 	js.Global().Set("setGroupApplyMemberFriend", js.FuncOf(wrapperGroup.SetGroupApplyMemberFriend))
 	js.Global().Set("getGroupMemberList", js.FuncOf(wrapperGroup.GetGroupMemberList))
+	js.Global().Set("getGroupMemberPageList", js.FuncOf(wrapperGroup.GetGroupMemberPageList))
 	js.Global().Set("getGroupMemberOwnerAndAdmin", js.FuncOf(wrapperGroup.GetGroupMemberOwnerAndAdmin))
 	js.Global().Set("getGroupMemberListByJoinTimeFilter", js.FuncOf(wrapperGroup.GetGroupMemberListByJoinTimeFilter))
 	js.Global().Set("getSpecifiedGroupMembersInfo", js.FuncOf(wrapperGroup.GetSpecifiedGroupMembersInfo))
