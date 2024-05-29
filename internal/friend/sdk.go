@@ -199,12 +199,11 @@ func (f *Friend) GetFriendListPage(ctx context.Context, keyword string, offset, 
 
 func (f *Friend) GetFriendsRemark(ctx context.Context) (map[string]string, error) {
 	req := &friend.GetFriendsRemarkReq{OwnerUserID: f.loginUserID}
-	resp := &friend.GetFriendsRemarkResp{}
-	friendsRemark, err := util.CallApi[resp](ctx, constant.GetFriendsRemark, req)
+	resp, err := util.CallApi[friend.GetFriendsRemarkResp](ctx, constant.GetFriendsRemark, req)
 	if err != nil {
 		return nil, err
 	}
-	return friendsRemark.FriendInfo, nil
+	return resp.FriendInfo, nil
 }
 
 func (f *Friend) SearchFriends(ctx context.Context, param *sdk.SearchFriendsParam) ([]*sdk.SearchFriendItem, error) {

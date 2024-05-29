@@ -34,6 +34,15 @@ func (c *Conversation) SyncConversationsAndTriggerCallback(ctx context.Context, 
 	if err := c.batchAddFaceURLAndName(ctx, conversationsOnServer...); err != nil {
 		return err
 	}
+	//重新赋值备注
+	friendsRemark := make(map[string]string)
+	friendsRemark, _ = c.friend.GetFriendsRemark(ctx)
+	for _, info := range conversationsOnServer {
+		remarkTmp, existsTmp := friendsRemark[info.UserID]
+		if existsTmp {
+			info.ShowName = remarkTmp
+		}
+	}
 	if err = c.conversationSyncer.Sync(ctx, conversationsOnServer, conversationsOnLocal, func(ctx context.Context, state int, server, local *model_struct.LocalConversation) error {
 		if state == syncer.Update || state == syncer.Insert {
 			c.doUpdateConversation(common.Cmd2Value{Value: common.UpdateConNode{ConID: server.ConversationID, Action: constant.ConChange, Args: []string{server.ConversationID}}})

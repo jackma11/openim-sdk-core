@@ -16,8 +16,10 @@ package syncer
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/OpenIMSDK/tools/log"
 	"github.com/google/go-cmp/cmp"
+	"github.com/openimsdk/openim-sdk-core/v3/pkg/db/model_struct"
 	"reflect"
 )
 
@@ -131,7 +133,6 @@ func (s *Syncer[T, V]) Sync(ctx context.Context, serverData []T, localData []T, 
 		server := serverData[i]
 		id := s.uuid(server)
 		local, ok := localMap[id]
-
 		// If the item doesn't exist locally, insert it.
 		if !ok {
 			if err := s.insert(ctx, server); err != nil {
@@ -158,8 +159,21 @@ func (s *Syncer[T, V]) Sync(ctx context.Context, serverData []T, localData []T, 
 		delete(localMap, id)
 		log.ZDebug(ctx, "syncer come", "type", s.ts, "server", server, "local", local, "isEq", s.eq(server, local))
 
+		//更新备注
+		eqStatus := s.eq(server, local)
+		if s.ts == "model_struct.LocalConversation" {
+			var serverConversation model_struct.LocalConversation
+			resByre, _ := json.Marshal(server)
+			_ = json.Unmarshal(resByre, &serverConversation)
+			var localConversation model_struct.LocalConversation
+			resByre, _ = json.Marshal(local)
+			_ = json.Unmarshal(resByre, &localConversation)
+			if serverConversation.ShowName != localConversation.ShowName {
+				eqStatus = false
+			}
+		}
 		// If the local and server items are equal, notify and continue.
-		if s.eq(server, local) {
+		if eqStatus {
 			if err := s.onNotice(ctx, Unchanged, local, server, notice); err != nil {
 				log.ZError(ctx, "sync notice unchanged failed", err, "type", s.ts, "server", server, "local", local)
 				return err

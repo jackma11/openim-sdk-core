@@ -124,7 +124,7 @@ func (c *Conversation) initSyncer() {
 		},
 		func(ctx context.Context, serverConversation, localConversation *model_struct.LocalConversation) error {
 			return c.db.UpdateColumnsConversation(ctx, serverConversation.ConversationID,
-				map[string]interface{}{"recv_msg_opt": serverConversation.RecvMsgOpt,
+				map[string]interface{}{"show_name": serverConversation.ShowName, "recv_msg_opt": serverConversation.RecvMsgOpt,
 					"is_pinned": serverConversation.IsPinned, "is_private_chat": serverConversation.IsPrivateChat, "burn_duration": serverConversation.BurnDuration,
 					"is_not_in_group": serverConversation.IsNotInGroup, "group_at_type": serverConversation.GroupAtType,
 					"update_unread_count_time": serverConversation.UpdateUnreadCountTime,
@@ -988,7 +988,6 @@ func (c *Conversation) batchGetUserNameAndFaceURL(ctx context.Context, userIDs .
 	var notInFriend []string
 	friendList, err := c.friend.Db().GetFriendInfoList(ctx, userIDs)
 	if err != nil {
-		log.ZWarn(ctx, "BatchGetUserNameAndFaceURL", err, "userIDs", userIDs)
 		notInFriend = userIDs
 	} else {
 		notInFriend = utils2.SliceSub(userIDs, utils2.Slice(friendList, func(e *model_struct.LocalFriend) string {
@@ -1022,15 +1021,6 @@ func (c *Conversation) batchGetUserNameAndFaceURL(ctx context.Context, userIDs .
 			userInfo := &user.BasicInfo{FaceURL: u.FaceURL, Nickname: u.Nickname}
 			m[u.UserID] = userInfo
 			c.user.UserBasicCache.Store(u.UserID, userInfo)
-		}
-	}
-	//重新赋值备注
-	friendsRemark := make(map[string]string)
-	friendsRemark, _ = c.friend.GetFriendsRemark(ctx)
-	for userId, info := range m {
-		remarkTmp, existsTmp := friendsRemark[userId]
-		if existsTmp {
-			info.Nickname = remarkTmp
 		}
 	}
 	return m, nil
