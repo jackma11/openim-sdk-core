@@ -79,7 +79,7 @@ func (w *JSWebSocket) dial(ctx context.Context, urlStr string) (*websocket.Conn,
 		return nil, nil, err
 	}
 	query := u.Query()
-	//query.Set("isMsgResp", "true")
+	query.Set("isMsgResp", "true")
 	u.RawQuery = query.Encode()
 	conn, httpResp, err := websocket.Dial(ctx, u.String(), nil)
 	if err != nil {
