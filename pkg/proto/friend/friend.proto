@@ -191,6 +191,15 @@ message getSpecifiedFriendsInfoResp {
   repeated getSpecifiedFriendsInfoInfo infos = 1;
 }
 
+
+message getFriendsRemarkReq {
+  string ownerUserID = 1;
+}
+
+message getFriendsRemarkResp {
+  map<string, string> friendInfo = 1;
+}
+
 service friend{
   //申请加好友
   rpc applyToAddFriend(applyToAddFriendReq) returns(applyToAddFriendResp);

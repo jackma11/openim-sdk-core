@@ -42,6 +42,7 @@ const (
 	GetDesignatedFriendsRouter      = "/friend/get_designated_friends"
 	AddFriendResponse               = "/friend/add_friend_response"
 	SetFriendRemark                 = "/friend/set_friend_remark"
+	GetFriendsRemark                = "/friend/get_friends_remark"
 	UpdateFriends                   = "/friend/update_friends"
 
 	AddBlackRouter     = "/friend/add_black"

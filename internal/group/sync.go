@@ -169,10 +169,10 @@ func (g *Group) SyncAllJoinedGroupsAndMembers(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	_, err = g.db.GetJoinedGroupListDB(ctx)
-	if err != nil {
-		return err
-	}
+	//_, err = g.db.GetJoinedGroupListDB(ctx)
+	//if err != nil {
+	//	return err
+	//}
 	//var wg sync.WaitGroup
 	//for _, group := range groups {
 	//	wg.Add(1)

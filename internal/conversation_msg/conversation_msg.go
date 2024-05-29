@@ -986,7 +986,6 @@ func (c *Conversation) batchGetUserNameAndFaceURL(ctx context.Context, userIDs .
 	m := make(map[string]*user.BasicInfo)
 	var notCachedUserIDs []string
 	var notInFriend []string
-
 	friendList, err := c.friend.Db().GetFriendInfoList(ctx, userIDs)
 	if err != nil {
 		log.ZWarn(ctx, "BatchGetUserNameAndFaceURL", err, "userIDs", userIDs)
@@ -1023,6 +1022,15 @@ func (c *Conversation) batchGetUserNameAndFaceURL(ctx context.Context, userIDs .
 			userInfo := &user.BasicInfo{FaceURL: u.FaceURL, Nickname: u.Nickname}
 			m[u.UserID] = userInfo
 			c.user.UserBasicCache.Store(u.UserID, userInfo)
+		}
+	}
+	//重新赋值备注
+	friendsRemark := make(map[string]string)
+	friendsRemark, _ = c.friend.GetFriendsRemark(ctx)
+	for userId, info := range m {
+		remarkTmp, existsTmp := friendsRemark[userId]
+		if existsTmp {
+			info.Nickname = remarkTmp
 		}
 	}
 	return m, nil

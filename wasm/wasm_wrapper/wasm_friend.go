@@ -48,6 +48,11 @@ func (w *WrapperFriend) GetFriendListPage(_ js.Value, args []js.Value) interface
 	return event_listener.NewCaller(open_im_sdk.GetFriendListPage, callback, &args).AsyncCallWithCallback()
 }
 
+func (w *WrapperFriend) GetFriendsRemark(_ js.Value, args []js.Value) interface{} {
+	callback := event_listener.NewBaseCallback(utils.FirstLower(utils.GetSelfFuncName()), w.commonFunc)
+	return event_listener.NewCaller(open_im_sdk.GetFriendsRemark, callback, &args).AsyncCallWithCallback()
+}
+
 func (w *WrapperFriend) SearchFriends(_ js.Value, args []js.Value) interface{} {
 	callback := event_listener.NewBaseCallback(utils.FirstLower(utils.GetSelfFuncName()), w.commonFunc)
 	return event_listener.NewCaller(open_im_sdk.SearchFriends, callback, &args).AsyncCallWithCallback()

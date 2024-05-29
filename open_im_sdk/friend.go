@@ -24,6 +24,10 @@ func GetFriendList(callback open_im_sdk_callback.Base, operationID string) {
 	call(callback, operationID, UserForSDK.Friend().GetFriendList)
 }
 
+func GetFriendsRemark(callback open_im_sdk_callback.Base, operationID string) {
+	call(callback, operationID, UserForSDK.Friend().GetFriendsRemark)
+}
+
 func GetFriendListPage(callback open_im_sdk_callback.Base, operationID string, keyword string, offset int32, count int32) {
 	call(callback, operationID, UserForSDK.Friend().GetFriendListPage, keyword, offset, count)
 }

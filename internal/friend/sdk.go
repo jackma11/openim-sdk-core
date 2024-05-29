@@ -197,6 +197,16 @@ func (f *Friend) GetFriendListPage(ctx context.Context, keyword string, offset, 
 	return res, nil
 }
 
+func (f *Friend) GetFriendsRemark(ctx context.Context) (map[string]string, error) {
+	req := &friend.GetFriendsRemarkReq{OwnerUserID: f.loginUserID}
+	resp := &friend.GetFriendsRemarkResp{}
+	friendsRemark, err := util.CallApi[resp](ctx, constant.GetFriendsRemark, req)
+	if err != nil {
+		return nil, err
+	}
+	return friendsRemark.FriendInfo, nil
+}
+
 func (f *Friend) SearchFriends(ctx context.Context, param *sdk.SearchFriendsParam) ([]*sdk.SearchFriendItem, error) {
 	if len(param.KeywordList) == 0 || (!param.IsSearchNickname && !param.IsSearchUserID && !param.IsSearchRemark) {
 		return nil, sdkerrs.ErrArgs.Wrap("keyword is null or search field all false")
