@@ -84,7 +84,19 @@ func (c *Conversation) GetConversationRecvMessageOpt(ctx context.Context, conver
 func (c *Conversation) GetOneConversation(ctx context.Context, sessionType int32, sourceID string) (*model_struct.LocalConversation, error) {
 	conversationID := c.getConversationIDBySessionType(sourceID, int(sessionType))
 	lc, err := c.db.GetConversation(ctx, conversationID)
+	remark := ""
+	if sessionType == constant.SingleChatType {
+		friendsRemark := make(map[string]string)
+		friendsRemark, _ = c.friend.GetFriendsRemark(ctx)
+		remarkTmp, existsTmp := friendsRemark[sourceID]
+		if existsTmp {
+			remark = remarkTmp
+		}
+	}
 	if err == nil {
+		if remark != "" {
+			lc.ShowName = remark
+		}
 		return lc, nil
 	} else {
 		var newConversation model_struct.LocalConversation
@@ -98,6 +110,9 @@ func (c *Conversation) GetOneConversation(ctx context.Context, sessionType int32
 				return nil, err
 			}
 			newConversation.ShowName = name
+			if remark != "" {
+				newConversation.ShowName = remark
+			}
 			newConversation.FaceURL = faceUrl
 		case constant.GroupChatType, constant.SuperGroupChatType:
 			newConversation.GroupID = sourceID
@@ -111,6 +126,9 @@ func (c *Conversation) GetOneConversation(ctx context.Context, sessionType int32
 		time.Sleep(time.Millisecond * 500)
 		lc, errTemp := c.db.GetConversation(ctx, conversationID)
 		if errTemp == nil {
+			if remark != "" {
+				lc.ShowName = remark
+			}
 			return lc, nil
 		}
 		err := c.db.InsertConversation(ctx, &newConversation)
